@@ -1,0 +1,6 @@
+1. Extraia o ZIP.
+2. Copie a pasta coletor/ e a pasta .github/ para a raiz do repositório gederal-int.
+3. No GitHub, adicione os Secrets SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY.
+4. Em Actions, rode "Coletor Federal da Sorte" primeiro com dry_run=true.
+5. Confira os logs antes de rodar com dry_run=false.
+6. Nunca publique a chave service_role no código do site.

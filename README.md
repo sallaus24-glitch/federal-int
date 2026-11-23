@@ -1,75 +1,80 @@
-# Federal da Sorte — Jogo do Bicho
+# Coletor inicial — Federal da Sorte (Jogo do Bicho)
 
-Versão inicial do painel estatístico nacional, com foco em resultados históricos do Jogo do Bicho por fonte/banca, modalidade, UF, município e horário.
+Este pacote adiciona um coletor Python ao projeto Federal da Sorte. Ele consulta as fontes ativas cadastradas em `fontes_resultados_bicho`, interpreta páginas públicas suportadas e grava extrações/resultados nas tabelas `extracoes_bicho` e `resultados_bicho`.
 
-## O que esta entrega contém
+## O que esta versão faz
 
-- Interface responsiva para computador e celular.
-- Conexão com o projeto Supabase exclusivo `federal-da-sorte`.
-- Leitura apenas de extrações com `status_conferencia = validado`.
-- Filtros por UF, fonte, modalidade e período.
-- Histórico das extrações e distribuição dos 25 grupos.
-- Categorias estatísticas: TOP 10, recorrentes, menos recorrentes, tendência recente, equilibradas, adaptativa e alternativas.
-- Leituras por grupo, dezena, centena e milhar.
-- Preservação dos dados antigos da CAIXA: o aplicativo não consulta nem altera as tabelas legadas `concursos` e `premios`.
+- Consulta fontes ativas com `metodo_coleta = pagina_publica`.
+- Adaptadores iniciais para:
+  - Hora do Bicho (`horadobicho.com`)
+  - Bancas do Bicho (`bancasdobicho.com.br`)
+  - O Jogo do Bicho (`ojogodobiicho.com`)
+- Mantém banca, data, horário, UF quando identificável, posição e número original.
+- Deriva dezena, centena, milhar, grupo e animal usando a tabela padrão dos 25 grupos.
+- Evita reimportar extrações já existentes e não sobrescreve resultados anteriores silenciosamente.
+- Detecta divergência entre grupo informado na página e grupo calculado pela dezena.
+- Grava as novas extrações como `pendente` (ou `divergente` quando há inconsistência). **Não valida resultados automaticamente.**
+- Mantém os dados antigos da CAIXA nas tabelas `concursos` e `premios`; não mistura as duas bases.
 
-## Publicação manual no GitHub Pages
+## Limitações importantes
 
-1. Faça backup do repositório atual.
-2. Extraia o ZIP.
-3. Publique os arquivos e pastas desta entrega na raiz do repositório `gederal-int`.
-4. Mantenha o GitHub Pages apontado para a branch/pasta que já publica o site.
-5. Abra a URL do site e teste no computador e no celular.
+1. É uma primeira versão de coleta por HTML público. Sites podem mudar o layout, bloquear requisições ou publicar dados corrigidos. O coletor registra erros para que sejam revisados.
+2. As fontes `Deu na PT` e `É o Jogo do Bicho` estão cadastradas, mas ainda não possuem adaptador neste pacote. O coletor as ignora com aviso, em vez de tentar interpretar conteúdo sem regra validada.
+3. Os agregadores podem replicar os mesmos resultados de uma banca. A deduplicação é por fonte + data + horário + modalidade + identificação da extração. A conciliação entre fontes diferentes ainda precisa de uma etapa própria para comparar cópias da mesma extração.
+4. Os resultados são gravados como pendentes para revisão. O site atual filtra extrações `validado`; portanto, nada novo deve aparecer no histórico público até a conferência e validação no painel/SQL.
+5. O coletor não aposta, não envia palpites e não faz qualquer transação financeira. É somente ingestão de dados publicados.
 
-Não é necessário npm para executar esta versão. Para testar localmente, use um servidor HTTP simples (por exemplo, a extensão Live Server do VS Code). Abrir `index.html` diretamente por `file://` pode bloquear módulos JavaScript.
+## Instalação manual no GitHub
 
-## Supabase já configurado
+Copie os arquivos deste ZIP para a raiz do repositório `gederal-int`, preservando os caminhos:
 
-Projeto: `federal-da-sorte`  
-Ref: `rrguwmsqjdndtvuclkgw`  
-URL: `https://rrguwmsqjdndtvuclkgw.supabase.co`
+- `coletor/coletar_resultados.py`
+- `coletor/requirements.txt`
+- `.github/workflows/coletar-resultados-bicho.yml`
 
-A chave `sb_publishable_...` em `supabase-config.js` é uma chave pública apropriada para o navegador. Nunca coloque uma chave `service_role` ou `secret` nesse arquivo, no GitHub ou em qualquer frontend.
+Não substitua `index.html`, `app.js`, `styles.css` ou outros arquivos existentes.
 
-O frontend usa somente SELECT nas tabelas de catálogo, extrações validadas e resultados. As políticas RLS do banco controlam o que pode ser lido. Não há escrita pelo navegador nesta versão.
+## Configurar os segredos no GitHub
 
-## Importante: dados e fontes
+No repositório: **Settings → Secrets and variables → Actions → New repository secret**.
 
-O catálogo de fontes está inicialmente vazio. Nenhum resultado foi raspado ou importado automaticamente nesta entrega. As páginas públicas encontradas anteriormente são agregadores não oficiais; devem ser verificadas quanto à precisão, estabilidade, termos de uso e duplicidade antes de qualquer coleta automática.
+Crie:
 
-O fluxo correto é:
-1. Cadastrar cada fonte/banca separadamente.
-2. Importar os resultados mantendo URL, data, horário, UF/município e payload original.
-3. Conferir os resultados.
-4. Marcar a extração como `validado` somente após conferência.
-5. O painel passa a incluir a extração nas análises.
+- `SUPABASE_URL` = `https://rrguwmsqjdndtvuclkgw.supabase.co`
+- `SUPABASE_SERVICE_ROLE_KEY` = chave `service_role`/secret do projeto Federal da Sorte.
 
-Não misture resultados de bancas, horários, estados ou modalidades diferentes como se fossem uma única extração.
+**Nunca coloque a chave service role em `index.html`, `app.js`, `supabase-config.js` ou em qualquer arquivo público.** Ela deve existir somente como GitHub Actions Secret. Não use a chave do projeto MASTER-PRO-AI.
 
-## Regras estatísticas
+## Primeiro teste
 
-- O painel calcula frequências descritivas no histórico disponível.
-- O índice de 0 a 100 é um ranking relativo dentro da amostra e dos filtros selecionados; não é probabilidade de premiação.
-- A aba de tendência usa uma janela recente aproximada de 30% da amostra disponível.
-- A amostra é ordenada por data/hora da extração para exibição. Para análises formais futuras, recomenda-se incluir desempate estável por fonte, modalidade e identificador da extração.
-- Resultados aleatórios não podem ser previstos com garantia. Nenhuma categoria deve ser apresentada como promessa de acerto.
+1. Abra **Actions → Coletor Federal da Sorte**.
+2. Clique em **Run workflow**.
+3. Mantenha `dry_run = true` para simular e ver quantas extrações seriam interpretadas sem gravar no banco.
+4. Verifique os logs. Se os resultados interpretados estiverem coerentes, execute novamente com `dry_run = false`.
+5. A execução agendada roda a cada 15 minutos e grava apenas registros pendentes/divergentes.
 
-## Estrutura
+## Verificar no Supabase
 
-- `index.html`, `styles.css`, `app.js`: aplicação web.
-- `supabase-config.js`: URL e chave publicável.
-- `scripts/fontes-candidatas.json`: fontes candidatas para avaliação humana.
-- `scripts/modelo-importacao.json`: exemplo de formato canônico de importação.
-- `.github/workflows/verificar-site.yml`: verificação simples de disponibilidade do site, sem coletar resultados.
+```sql
+select
+  f.nome as fonte,
+  e.data_extracao,
+  e.horario_local,
+  e.identificador_origem,
+  e.status_conferencia,
+  count(r.id) as total_premios
+from public.extracoes_bicho e
+join public.fontes_resultados_bicho f on f.id = e.fonte_id
+left join public.resultados_bicho r on r.extracao_id = e.id
+group by f.nome, e.id
+order by e.data_extracao desc, e.horario_local desc;
+```
 
-## Próximas etapas recomendadas
+## Regras de segurança e qualidade
 
-1. Confirmar que o frontend conecta ao Supabase e carrega os catálogos.
-2. Cadastrar e validar as fontes reais.
-3. Implementar importador seguro no lado servidor e revisão humana.
-4. Construir backtest walk-forward por série homogênea (mesma banca, modalidade e horário).
-5. Adicionar autenticação e área administrativa antes de permitir cadastro/validação pelo painel.
-
-## Observação legal e operacional
-
-Este software é um painel de organização e análise estatística de informações. Não inclui apostas, pagamentos, intermediação ou instruções para operar bancas.
+- Não há chave privilegiada no código do navegador.
+- Não marca automaticamente resultado como validado.
+- Não atualiza silenciosamente extração com hash diferente: marca a existente como `divergente`.
+- Falhas parciais são registradas como `incompleto`.
+- O horário padrão é `America/Sao_Paulo`.
+- A extração de cada banca/horário permanece separada.
