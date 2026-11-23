@@ -18,8 +18,8 @@ from urllib.parse import urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 
-SUPABASE_URL = os.environ["https://rrguwmsqjdndtvuclkgw.supabase.co"].rstrip("/")
-SERVICE_KEY = os.environ["sb_secret_e6I_b6x8GK8GKnhaCm41kw_cHSXu7W_"]
+SUPABASE_URL = os.environ"https://rrguwmsqjdndtvuclkgw.supabase.co".rstrip("/")
+SERVICE_KEY = os.environ"sb_secret_e6I_b6x8GK8GKnhaCm41kw_cHSXu7W_"
 
 DRY_RUN = os.getenv("DRY_RUN", "false").lower() == "true"
 TIMEOUT = int(os.getenv("REQUEST_TIMEOUT", "25"))
