@@ -1,0 +1,46 @@
+
+name: Coletor Federal da Sorte
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Apenas simular, sem gravar no Supabase"
+        required: true
+        type: boolean
+        default: true
+
+  schedule:
+    - cron: "*/15 * * * *"
+
+concurrency:
+  group: federal-da-sorte-coletor
+  cancel-in-progress: false
+
+jobs:
+  coletar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: coletor/requirements.txt
+
+      - name: Instalar dependências
+        run: pip install -r coletor/requirements.txt
+
+      - name: Executar coletor
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
+          REQUEST_TIMEOUT: "25"
+          MAX_BANK_PAGES: "30"
+        run: python coletor/coletar_resultados.py
