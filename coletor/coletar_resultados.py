@@ -18,8 +18,11 @@ from urllib.parse import urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 
-SUPABASE_URL = os.environ"https://rrguwmsqjdndtvuclkgw.supabase.co".rstrip("/")
-SERVICE_KEY = os.environ"sb_secret_e6I_b6x8GK8GKnhaCm41kw_cHSXu7W_"
+SUPABASE_URL = os.getenv("SUPABASE_URL", "").strip().rstrip("/")
+SERVICE_KEY = os.getenv("SUPABASE_SECRET_KEY", "").strip()
+
+if not SUPABASE_URL or not SERVICE_KEY:
+    raise SystemExit("Configure SUPABASE_URL e SUPABASE_SECRET_KEY.")
 
 DRY_RUN = os.getenv("DRY_RUN", "false").lower() == "true"
 TIMEOUT = int(os.getenv("REQUEST_TIMEOUT", "25"))
@@ -28,6 +31,7 @@ TZ = "America/Sao_Paulo"
 
 HEADERS = {
     "apikey": SERVICE_KEY,
+    "Authorization": f"Bearer {SERVICE_KEY}",
     "Content-Type": "application/json",
     "Accept": "application/json",
     "User-Agent": "FederalDaSorteDataCollector/1.0 (+public-results-indexing)"
@@ -76,6 +80,10 @@ class Draw:
 
 
 def rest(method, table, *, params=None, payload=None, prefer=None):
+    if DRY_RUN and method.upper() != "GET":
+        raise RuntimeError(
+            f"DRY_RUN ativo: operação {method.upper()} bloqueada."
+        )
     url = f"{SUPABASE_URL}/rest/v1/{table}"
     headers = dict(HEADERS)
     if prefer:
@@ -326,10 +334,13 @@ def import_draw(draw, source, modality_id):
             print(f"[DUPLICADA] {draw.bank} {draw.date} {draw.time} — já existe")
         else:
             print(f"[DIVERGÊNCIA] {draw.bank} {draw.date} {draw.time} — registro existente não será sobrescrito")
-            rest("PATCH", "extracoes_bicho", params={"id":f"eq.{old['id']}"}, payload={
-                "status_conferencia":"divergente",
-                "observacoes":"Nova versão detectada pela coleta; revisão manual necessária."
-            }, prefer="return=minimal")
+            if not DRY_RUN:
+                rest("PATCH", "extracoes_bicho", params={"id":f"eq.{old['id']}"}, payload={
+                    "status_conferencia":"divergente",
+                    "observacoes":"Nova versão detectada pela coleta; revisão manual necessária."
+                }, prefer="return=minimal")
+            else:
+                print("[SIMULAÇÃO] Registro existente divergente não será atualizado")
         return "duplicate"
     if DRY_RUN:
         print(f"[SIMULAÇÃO] {draw.bank} {draw.date} {draw.time}: {len(draw.prizes)} prêmios")
