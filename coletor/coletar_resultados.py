@@ -2,6 +2,7 @@
 # Federal da Sorte - coletor inicial de resultados públicos
 # Importa extrações como PENDENTES para conferência humana. Nunca marca como validadas automaticamente.
 
+
 from __future__ import annotations
 
 import hashlib
@@ -17,15 +18,16 @@ from urllib.parse import urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 
-SUPABASE_URL = os.environ["SUPABASE_URL"].rstrip("/")
-SERVICE_KEY = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
+SUPABASE_URL = os.environ["https://rrguwmsqjdndtvuclkgw.supabase.co"].rstrip("/")
+SERVICE_KEY = os.environ["sb_secret_e6I_b6x8GK8GKnhaCm41kw_cHSXu7W_"]
+
 DRY_RUN = os.getenv("DRY_RUN", "false").lower() == "true"
 TIMEOUT = int(os.getenv("REQUEST_TIMEOUT", "25"))
 MAX_BANK_PAGES = int(os.getenv("MAX_BANK_PAGES", "30"))
 TZ = "America/Sao_Paulo"
+
 HEADERS = {
     "apikey": SERVICE_KEY,
-    "Authorization": f"Bearer {SERVICE_KEY}",
     "Content-Type": "application/json",
     "Accept": "application/json",
     "User-Agent": "FederalDaSorteDataCollector/1.0 (+public-results-indexing)"
