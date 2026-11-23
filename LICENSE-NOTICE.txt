@@ -1,0 +1,1 @@
+Entrega de código do projeto Federal da Sorte. Verifique licenças de dependências externas e fontes de dados antes de redistribuir ou automatizar coleta.

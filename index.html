@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#071b16">
+  <meta name="description" content="Painel estatístico do Jogo do Bicho por banca, modalidade e horário.">
+  <title>Federal da Sorte | Inteligência do Bicho</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">FS</div><div><strong>FEDERAL<span>DA SORTE</span></strong><small>INTELIGÊNCIA ESTATÍSTICA</small></div></div>
+      <div class="side-label">PAINEL</div>
+      <a class="nav active" href="#visao"><span>◈</span> Visão geral</a>
+      <a class="nav" href="#sugestoes"><span>✧</span> Sugestões inteligentes</a>
+      <a class="nav" href="#historico"><span>▤</span> Histórico de resultados</a>
+      <a class="nav" href="#grupos"><span>◉</span> Grupos e dezenas</a>
+      <div class="sidebar-note"><span class="pulse"></span><div><b>Motor estatístico</b><small>Versão 2.0 · análise local</small></div></div>
+      <div class="side-foot">Dados públicos e históricos<br>Resultados sujeitos à conferência.</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><div class="eyebrow">CENTRAL DE ANÁLISE · BRASIL</div><h1>Inteligência do Bicho</h1><p class="subtitle">Leitura estatística por banca, modalidade e faixa de tempo.</p></div>
+        <div class="top-actions"><span class="status"><i></i><span id="connectionText">Conectando ao banco</span></span><button class="icon-btn" id="refreshBtn" title="Atualizar dados">↻</button></div>
+      </header>
+
+      <section class="filters panel">
+        <div class="filter-title"><b>Parâmetros da análise</b><span>Os filtros mantêm cada banca e extração em sua própria série.</span></div>
+        <label>UF<select id="ufFilter"><option value="">Todas as UFs</option></select></label>
+        <label>Fonte / banca<select id="sourceFilter"><option value="">Todas as fontes</option></select></label>
+        <label>Modalidade<select id="modalityFilter"><option value="">Todas as modalidades</option></select></label>
+        <label>Período<select id="periodFilter"><option value="all">Histórico disponível</option><option value="30">Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="180">Últimos 180 dias</option></select></label>
+      </section>
+
+      <section id="visao" class="stats-grid">
+        <article class="stat-card"><div class="stat-label">EXTRAÇÕES VALIDADAS</div><div class="stat-value" id="statDraws">—</div><div class="stat-foot">Dentro dos filtros atuais</div><div class="stat-icon">▤</div></article>
+        <article class="stat-card"><div class="stat-label">RESULTADOS ANALISADOS</div><div class="stat-value" id="statResults">—</div><div class="stat-foot">Posições registradas</div><div class="stat-icon">◈</div></article>
+        <article class="stat-card"><div class="stat-label">GRUPO EM DESTAQUE</div><div class="stat-value" id="statGroup">—</div><div class="stat-foot" id="statAnimal">Aguardando histórico</div><div class="stat-icon">♧</div></article>
+        <article class="stat-card"><div class="stat-label">BASE DE DADOS</div><div class="stat-value" id="statSources">—</div><div class="stat-foot">Fontes ativas no catálogo</div><div class="stat-icon">◎</div></article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel chart-panel">
+          <div class="panel-head"><div><div class="eyebrow">DISTRIBUIÇÃO HISTÓRICA</div><h2>Frequência por grupo</h2></div><span class="tag">01 — 25</span></div>
+          <div id="groupChart" class="bars"><div class="empty">Carregando dados...</div></div>
+          <div class="chart-legend"><span><i class="legend-dot"></i> Ocorrências observadas</span><span>Frequência não representa probabilidade futura</span></div>
+        </article>
+        <article class="panel insight-panel">
+          <div class="panel-head"><div><div class="eyebrow">LEITURA DO MODELO</div><h2>Resumo analítico</h2></div><span class="spark">✧</span></div>
+          <div id="insightText" class="insight-text">Aguardando resultados validados para gerar indicadores.</div>
+          <div class="insight-metrics"><div><b id="metricRecent">—</b><small>Registros recentes</small></div><div><b id="metricCoverage">—</b><small>Grupos observados</small></div></div>
+        </article>
+      </section>
+
+      <section id="sugestoes" class="panel suggestions-panel">
+        <div class="panel-head suggestion-heading"><div><div class="eyebrow">MOTOR ADAPTATIVO · VERSÃO 2.0</div><h2>Sugestões estatísticas</h2><p>Listas calculadas a partir do histórico validado e dos filtros selecionados.</p></div><button class="primary-btn" id="analyzeBtn">↻ Recalcular análise</button></div>
+        <div class="tabs" id="categoryTabs">
+          <button class="tab active" data-cat="top10">TOP 10</button><button class="tab" data-cat="recorrentes">Recorrentes</button><button class="tab" data-cat="menos_recorrentes">Menos recorrentes</button><button class="tab" data-cat="tendencia_recente">Tendência recente</button><button class="tab" data-cat="equilibradas">Equilibradas</button><button class="tab" data-cat="adaptativa">Adaptativa</button><button class="tab" data-cat="alternativas">Alternativas</button>
+        </div>
+        <div class="suggestion-types"><span>TIPO DE LEITURA</span><div id="typeTabs"><button class="type active" data-type="grupo">Grupos</button><button class="type" data-type="dezena">Dezenas</button><button class="type" data-type="centena">Centenas</button><button class="type" data-type="milhar">Milhares</button></div></div>
+        <div id="suggestionList" class="suggestion-list"><div class="empty">Sem histórico validado para gerar sugestões.</div></div>
+        <p class="disclaimer">Importante: os indicadores são rankings estatísticos relativos, não probabilidades de premiação. Resultados aleatórios não podem ser previstos com garantia.</p>
+      </section>
+
+      <section id="historico" class="panel history-panel">
+        <div class="panel-head"><div><div class="eyebrow">BASE CONFERIDA</div><h2>Últimas extrações</h2></div><span class="tag" id="historyCount">0 registros</span></div>
+        <div class="table-wrap"><table><thead><tr><th>DATA</th><th>HORÁRIO</th><th>UF / CIDADE</th><th>FONTE</th><th>MODALIDADE</th><th>RESULTADOS</th></tr></thead><tbody id="historyBody"><tr><td colspan="6" class="empty">Nenhuma extração validada encontrada.</td></tr></tbody></table></div>
+      </section>
+
+      <section id="grupos" class="panel groups-panel">
+        <div class="panel-head"><div><div class="eyebrow">REFERÊNCIA DO JOGO</div><h2>Os 25 grupos de animais</h2></div><span class="tag">100 dezenas</span></div>
+        <div class="animal-grid" id="animalGrid"></div>
+      </section>
+      <footer>FEDERAL DA SORTE · Estatística descritiva · <span id="updatedAt">—</span><br><small>Este projeto organiza informações históricas públicas. Não realiza apostas, pagamentos ou intermediação.</small></footer>
+    </main>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

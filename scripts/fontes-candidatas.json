@@ -1,0 +1,26 @@
+[
+  {
+    "nome": "O Jogo do Bicho",
+    "url": "https://ojogodobiicho.com/resultados-anteriores",
+    "tipo": "agregador_nao_oficial",
+    "uso": "candidato para pesquisa de arquivo histórico; validar cobertura, termos e consistência antes de coletar"
+  },
+  {
+    "nome": "Hora do Bicho",
+    "url": "https://horadobicho.com/resultados",
+    "tipo": "agregador_nao_oficial",
+    "uso": "candidato para comparação cruzada de resultados por banca"
+  },
+  {
+    "nome": "Deu no Poste",
+    "url": "https://deunoposte.com.br/resultado-jogo-do-bicho/",
+    "tipo": "agregador_nao_oficial",
+    "uso": "candidato para comparação cruzada; verificar disponibilidade e histórico"
+  },
+  {
+    "nome": "Bancas do Bicho - horários",
+    "url": "https://bancasdobicho.com.br/horarios-jogo-do-bicho",
+    "tipo": "referencia_de_horarios",
+    "uso": "referência de horários; não tratar como fonte de resultados"
+  }
+]

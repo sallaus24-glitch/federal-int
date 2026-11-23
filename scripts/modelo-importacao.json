@@ -1,0 +1,38 @@
+{
+  "fonte": {
+    "nome": "Nome da banca ou fonte",
+    "tipo_fonte": "banca",
+    "abrangencia": "estadual",
+    "uf": "BA",
+    "municipio": "Cidade"
+  },
+  "modalidade_codigo": "banca_local",
+  "extracao": {
+    "data_extracao": "2026-11-23",
+    "horario_local": "10:00:00",
+    "fuso_horario": "America/Sao_Paulo",
+    "uf": "BA",
+    "municipio": "Cidade",
+    "identificador_origem": "identificador informado pela fonte",
+    "url_resultado": "https://exemplo.invalid/resultado",
+    "status_conferencia": "pendente",
+    "payload_original": {
+      "origem": "preencher com conteúdo original"
+    }
+  },
+  "resultados": [
+    {
+      "posicao": 1,
+      "numero": "1234",
+      "grupo": 9,
+      "dezena": "34",
+      "centena": "234",
+      "milhar": "1234",
+      "animal": "Cobra",
+      "payload_original": {
+        "linha_original": "1º prêmio - 1234"
+      }
+    }
+  ],
+  "nota": "Exemplo ilustrativo. Não importar dados fictícios. Manter cada banca/horário/modalidade em sua própria série."
+}
