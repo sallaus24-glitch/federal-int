@@ -372,7 +372,10 @@ def import_draw(draw, source, modality_id):
                                 "grupo_confere":p["grupo_confere"],"texto":p["texto_fonte"]}
         })
     try:
-        rest("POST","resultados_bicho",payload=rows,prefer="return=minimal")
+        rest("POST","resultados_bicho",
+             params={"on_conflict":"extracao_id,posicao"},
+             payload=rows,
+             prefer="resolution=merge-duplicates,return=minimal")
     except Exception:
         rest("PATCH","extracoes_bicho",params={"id":f"eq.{extraction_id}"},
              payload={"status_conferencia":"incompleto","observacoes":"Falha ao gravar todos os prêmios; revisar e reprocessar."},
