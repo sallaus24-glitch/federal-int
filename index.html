@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#071b16">
   <meta name="description" content="Painel estatístico do Jogo do Bicho por banca, modalidade e horário.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Federal da Sorte | Inteligência do Bicho</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -27,7 +31,7 @@
     <main class="main">
       <header class="topbar">
         <div><div class="eyebrow">CENTRAL DE ANÁLISE · BRASIL</div><h1>Inteligência do Bicho</h1><p class="subtitle">Leitura estatística por banca, modalidade e faixa de tempo.</p></div>
-        <div class="top-actions"><span class="status"><i></i><span id="connectionText">Conectando ao banco</span></span><button class="icon-btn" id="refreshBtn" title="Atualizar dados">↻</button></div>
+        <div class="top-actions"><span class="status"><i></i><span id="connectionText">Conectando ao banco</span></span><button class="icon-btn" id="installBtn" type="button" title="Instalar aplicativo" aria-label="Instalar aplicativo">⇩</button><button class="icon-btn" id="refreshBtn" title="Atualizar dados">↻</button></div>
       </header>
 
       <section class="filters panel">

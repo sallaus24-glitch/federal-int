@@ -121,4 +121,22 @@ $("categoryTabs").addEventListener("click",e=>{const b=e.target.closest("[data-c
 $("typeTabs").addEventListener("click",e=>{const b=e.target.closest("[data-type]");if(!b)return;state.type=b.dataset.type;document.querySelectorAll(".type").forEach(x=>x.classList.toggle("active",x===b));renderSuggestions(filtered().rs);});
 ["ufFilter","sourceFilter","modalityFilter","periodFilter"].forEach(id=>$(id).addEventListener("change",render));
 $("refreshBtn").addEventListener("click",loadData);$("analyzeBtn").addEventListener("click",()=>renderSuggestions(filtered().rs));
+let installPrompt=null;
+const installButton=$("installBtn");
+const isInstalled=window.matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+if(isInstalled)installButton.hidden=true;
+window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();installPrompt=event;});
+installButton.addEventListener("click",async()=>{
+  if(!installPrompt){
+    const isAppleMobile=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+    alert(isAppleMobile?"Para instalar, abra Compartilhar no Safari e escolha Adicionar à Tela de Início.":"No menu do navegador, escolha Instalar app ou Adicionar à tela inicial.");
+    return;
+  }
+  await installPrompt.prompt();
+  const choice=await installPrompt.userChoice;
+  if(choice.outcome==="accepted")installButton.hidden=true;
+  installPrompt=null;
+});
+window.addEventListener("appinstalled",()=>{installButton.hidden=true;installPrompt=null;});
+if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js").catch(error=>console.error("Falha ao registrar service worker:",error));
 renderAnimals();loadData();
