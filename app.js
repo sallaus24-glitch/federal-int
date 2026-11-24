@@ -23,7 +23,7 @@ async function loadData(){
       fetchAll("modalidades",db.from("modalidades_bicho").select("id,codigo,nome,ativa").eq("ativa",true).order("nome")),
       fetchAll("grupos",db.from("grupos_animais_bicho").select("grupo,animal").eq("ativo",true).order("grupo")),
       fetchAll("mapa",db.from("mapeamento_dezenas_bicho").select("dezena,grupo").order("dezena")),
-      fetchAll("extrações",db.from("extracoes_bicho").select("id,fonte_id,modalidade_id,data_extracao,horario_local,uf,municipio,identificador_origem,url_resultado,status_conferencia,observacoes").in("status_conferencia",["pendente","divergente","incompleto","validado"]).order("data_extracao",{ascending:false}).limit(5000)),
+      fetchAll("extrações",db.from("extracoes_bicho").select("id,fonte_id,modalidade_id,data_extracao,horario_local,uf,municipio,identificador_origem,url_resultado,status_conferencia,observacoes").order("data_extracao",{ascending:false}).limit(5000)),
       fetchAll("resultados",db.from("resultados_bicho").select("id,extracao_id,posicao,numero,grupo,dezena,centena,milhar,animal").order("posicao"))
     ]);
     state.sources=sources;state.modalities=modalities;state.groups=groups;state.mapping=mapping;state.extractions=extractions;
