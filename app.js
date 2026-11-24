@@ -23,7 +23,7 @@ async function loadData(){
       fetchAll("modalidades",db.from("modalidades_bicho").select("id,codigo,nome,ativa").eq("ativa",true).order("nome")),
       fetchAll("grupos",db.from("grupos_animais_bicho").select("grupo,animal").eq("ativo",true).order("grupo")),
       fetchAll("mapa",db.from("mapeamento_dezenas_bicho").select("dezena,grupo").order("dezena")),
-      fetchAll("extrações",db.from("extracoes_bicho").select("id,fonte_id,modalidade_id,data_extracao,horario_local,uf,municipio,identificador_origem,url_resultado").eq("status_conferencia","validado").order("data_extracao",{ascending:false}).limit(5000)),
+      fetchAll("extrações",db.from("extracoes_bicho").select("id,fonte_id,modalidade_id,data_extracao,horario_local,uf,municipio,identificador_origem,url_resultado,status_conferencia,observacoes").in("status_conferencia",["pendente","divergente","incompleto","validado"]).order("data_extracao",{ascending:false}).limit(5000)),
       fetchAll("resultados",db.from("resultados_bicho").select("id,extracao_id,posicao,numero,grupo,dezena,centena,milhar,animal").order("posicao"))
     ]);
     state.sources=sources;state.modalities=modalities;state.groups=groups;state.mapping=mapping;state.extractions=extractions;
@@ -74,7 +74,7 @@ function renderBars(data){
   $("groupChart").innerHTML=all.map(x=>`<div class="bar-item"><em>${x.count||""}</em><div class="bar" style="height:${Math.max(2,x.count/max*100)}%"></div><small>${x.key}</small></div>`).join("");
 }
 function renderInsight(groups,rs,ex){
-  if(!rs.length){$("insightText").textContent="Ainda não existem resultados validados para os filtros selecionados. Cadastre fontes e importe resultados conferidos para iniciar a análise.";return;}
+  if(!rs.length){$("insightText").textContent="Ainda não existem resultados coletados para os filtros selecionados. Aguarde uma execução bem-sucedida do coletor ou confira o cadastro das fontes.";return;}
   const top=groups.slice(0,3).map(x=>`${x.key} (${animalFor(x.key)})`).join(", ");
   const bottom=[...groups].sort((a,b)=>a.count-b.count).slice(0,3).map(x=>x.key).join(", ");
   $("insightText").textContent=`Foram analisados ${rs.length} resultados em ${ex.length} extrações. Os grupos com maior frequência observada são ${top||"—"}. Os menos frequentes na amostra são ${bottom||"—"}. Essa diferença descreve apenas o histórico selecionado e não indica vantagem matemática em sorteios futuros.`;
@@ -85,8 +85,8 @@ function renderHistory(ex,rs){
   const source=new Map(state.sources.map(x=>[x.id,x.nome])),mods=new Map(state.modalities.map(x=>[x.id,x.nome]));
   $("historyBody").innerHTML=ex.slice(0,30).map(x=>{
     const nums=(byId.get(x.id)||[]).sort((a,b)=>a.posicao-b.posicao).map(r=>`${r.posicao}º ${r.numero}`).join(" · ");
-    return `<tr><td>${fmtDate(x.data_extracao)}</td><td>${escapeHtml((x.horario_local||"—").slice(0,5))}</td><td>${escapeHtml([x.uf,x.municipio].filter(Boolean).join(" / ")||"Nacional")}</td><td>${escapeHtml(source.get(x.fonte_id)||"Fonte")}</td><td>${escapeHtml(mods.get(x.modalidade_id)||"—")}</td><td class="numbers">${escapeHtml(nums||"Sem posições")}</td></tr>`;
-  }).join("")||'<tr><td colspan="6" class="empty">Nenhuma extração validada encontrada.</td></tr>';
+    return `<tr><td>${fmtDate(x.data_extracao)}</td><td>${escapeHtml((x.horario_local||"—").slice(0,5))}</td><td>${escapeHtml([x.uf,x.municipio].filter(Boolean).join(" / ")||"Nacional")}</td><td>${escapeHtml(source.get(x.fonte_id)||"Fonte")}</td><td>${escapeHtml(mods.get(x.modalidade_id)||"—")}</td><td>${escapeHtml(x.status_conferencia||"—")}</td><td class="numbers">${escapeHtml(nums||"Sem posições")}</td></tr>`;
+  }).join("")||'<tr><td colspan="7" class="empty">Nenhuma extração coletada encontrada.</td></tr>';
 }
 function rankData(rs,type,category){
   const all=countsFor(rs,type);if(!all.length)return [];
